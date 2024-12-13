@@ -15,12 +15,9 @@ const { handlerAI } = require("./utils");
 const { textToVoice } = require("./services/eventlab");
 
 /**
- *
  * Plugin settings
  * https://platform.openai.com/docs/api-reference
- *
  */
-
 const employeesAddonConfig = {
   model: "gpt-3.5-turbo",
   temperature: 0,
@@ -29,25 +26,22 @@ const employeesAddonConfig = {
 const employeesAddon = init(employeesAddonConfig);
 
 /**
- *
- * 🙉 Flow del Bot
+ * Flujos del bot
  * https://bot-whatsapp.netlify.app/docs/flows/
- *
  */
-
 const flowVentas = addKeyword(["pedir", "ordenar"])
-.addAnswer(
-  ["Claro, que te interesa?", "Mejor te envio audio.."],
-  null,
-  async (_, { flowDynamic }) => {
-    console.log("🙉 texto a voz....");
-    const path = await textToVoice(
-      "Si claro como te puedo ayudar si gustas enviame detalle de tecnicos que necesitas para tu servidor"
-    );
-    console.log(`🙉 Fin texto a voz....[PATH]:${path}`);
-    await flowDynamic([{ body: "escucha", media: path }]);
-  }
-);
+  .addAnswer(
+    ["Claro, que te interesa?", "Mejor te envio audio.."],
+    null,
+    async (_, { flowDynamic }) => {
+      console.log("🙉 texto a voz....");
+      const path = await textToVoice(
+        "Si claro como te puedo ayudar si gustas enviame detalle de tecnicos que necesitas para tu servidor"
+      );
+      console.log(`🙉 Fin texto a voz....[PATH]:${path}`);
+      await flowDynamic([{ body: "escucha", media: path }]);
+    }
+  );
 
 const flowSoporte = addKeyword(["necesito ayuda"]).addAnswer(
   "Claro como te puedo ayudar?"
@@ -83,9 +77,26 @@ const main = async () => {
 
   const adapterProvider = createProvider(BaileysProvider);
 
+  // Enviar mensaje a tu WhatsApp cuando el bot se conecte
+  adapterProvider.on('ready', async () => {
+    const numeroTelefono = '18299315927@s.whatsapp.net'; // Tu número de teléfono completo con código de país
+    const mensaje = '¡El bot se ha conectado exitosamente a WhatsApp! 🚀';
+
+    await adapterProvider.sendMessage(numeroTelefono, {
+        text: mensaje,
+    });
+
+    console.log('Mensaje enviado al propietario: Bot conectado.');
+});
+
+
+  // Escuchar mensajes recibidos y mostrarlos en consola
+  adapterProvider.getProvider().on('message', (msg) => {
+      console.log('Mensaje recibido:', msg.body);
+  });
+
   /**
-   * 🤔 Empledos digitales
-   * Imaginar cada empleado descrito con sus deberes de manera explicita
+   * 🤔 Empleados digitales
    */
   const employees = [
     {
