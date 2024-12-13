@@ -37,7 +37,7 @@ const employeesAddon = init(employeesAddonConfig);
 
 const flowVentas = addKeyword(["pedir", "ordenar"])
 .addAnswer(
-  ["Claro que te interesa?", "mejor te envio audio.."],
+  ["Claro, que te interesa?", "Mejor te envio audio.."],
   null,
   async (_, { flowDynamic }) => {
     console.log("🙉 texto a voz....");
