@@ -6,7 +6,7 @@ const fs = require('node:fs')
  */
 const textToVoice = async (text,voiceId = 'vwfl76D5KBjKuSGfTbLB') => {
   const EVENT_TOKEN = process.env.EVENT_TOKEN ?? "";
-  const URL = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`;
+  const URL = `https://elevenlabs.io/app/speech-synthesis/text-to-speech${voiceId}`;
 
   const header = new Headers();
   header.append("accept", "audio/mpeg");
