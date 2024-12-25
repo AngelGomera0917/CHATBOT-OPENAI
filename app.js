@@ -57,7 +57,6 @@ const flowVoiceNote = addKeyword(EVENTS.VOICE_NOTE).addAction(
     const empleado = await employeesAddon.determine(text); 
 
     employeesAddon.gotoFlow(empleado, ctxFn);
-
   }
 );
 
@@ -82,16 +81,14 @@ const main = async () => {
     const numeroTelefono = '18299315927@s.whatsapp.net'; // Tu número de teléfono completo con código de país
     const mensaje = '¡El bot se ha conectado exitosamente a WhatsApp! 🚀';
 
-    await adapterProvider.sendMessage(numeroTelefono, {
-        text: mensaje,
-    });
+    await adapterProvider
 
     console.log('Mensaje enviado al propietario: Bot conectado.');
 });
 
 
   // Escuchar mensajes recibidos y mostrarlos en consola
-  adapterProvider.getProvider().on('message', (msg) => {
+  adapterProvider.on('message', (msg) => {
       console.log('Mensaje recibido:', msg.body);
   });
 
