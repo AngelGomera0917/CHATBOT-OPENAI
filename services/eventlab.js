@@ -1,12 +1,20 @@
-const fs = require('node:fs')
+const fs = require("node:fs");
+const path = require("path");
+
 /**
- *
- * @param {*} voiceId clone voice vwfl76D5KBjKuSGfTbLB
- * @returns
+ * Convierte texto a audio usando ElevenLabs API
+ * @param {string} text - El texto a convertir en audio
+ * @param {string} voiceId - ID de la voz (por defecto: 'vwfl76D5KBjKuSGfTbLB')
+ * @returns {string} - Ruta del archivo de audio generado
  */
-const textToVoice = async (text,voiceId = 'vwfl76D5KBjKuSGfTbLB') => {
+const convertTextToVoice = async (text, voiceId = "vwfl76D5KBjKuSGfTbLB") => {
   const EVENT_TOKEN = process.env.EVENT_TOKEN ?? "";
-  const URL = `https://elevenlabs.io/app/speech-synthesis/text-to-speech${voiceId}`;
+
+  if (!EVENT_TOKEN) {
+    throw new Error("EVENT_TOKEN no está configurado en las variables de entorno.");
+  }
+
+  const URL = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`;
 
   const header = new Headers();
   header.append("accept", "audio/mpeg");
@@ -30,11 +38,23 @@ const textToVoice = async (text,voiceId = 'vwfl76D5KBjKuSGfTbLB') => {
   };
 
   const response = await fetch(URL, requestOptions);
+
+  if (!response.ok) {
+    const errorDetails = await response.text();
+    throw new Error(`Error en la API: ${response.status} - ${errorDetails}`);
+  }
+
   const buffer = await response.arrayBuffer();
-  const pathFile = `${process.cwd()}/tmp/${Date.now()}-auido.mp3`;
+
+  const tmpDir = path.join(process.cwd(), "tmp");
+  if (!fs.existsSync(tmpDir)) {
+    fs.mkdirSync(tmpDir);
+  }
+
+  const pathFile = `${tmpDir}/${Date.now()}-audio.mp3`;
   fs.writeFileSync(pathFile, Buffer.from(buffer));
-  
+
   return pathFile;
 };
 
-module.exports = { textToVoice };
+module.exports = { convertTextToVoice };
